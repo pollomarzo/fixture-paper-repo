@@ -12,21 +12,21 @@ project:
   title: An Interim Dogfood Paper for the Engine Shim
   date: 2026-07-09
   authors:
-  - name: Ada Fixture
-    orcid: 0000-0002-1825-0097
-    affiliations:
-    - Fixture Institute
-    corresponding: true
-    email: ada@example.org
-    roles:
-    - conceptualization
-    - software
-    - writing - original draft
+    - name: Ada Fixture
+      orcid: 0000-0002-1825-0097
+      affiliations:
+        - Fixture Institute
+      corresponding: true
+      email: ada@example.org
+      roles:
+        - conceptualization
+        - software
+        - writing - original draft
   keywords:
-  - fixtures
-  - engine
+    - fixtures
+    - engine
   bibliography:
-  - bib.bib
+    - bib.bib
   options:
     youtube: https://youtu.be/dQw4w9WgXcQ
     oaktree-sapling:
@@ -35,3 +35,5 @@ project:
       # real `vX.Y.Z` on canonical. A non-release pin fails loud in the shim (`pin a release`).
       version: v0.0.0-dev.6
       edition: fixture-edition
+  doi: 10.5072/zenodo.562233
+  github: https://github.com/pollomarzo/fixture-paper-repo
