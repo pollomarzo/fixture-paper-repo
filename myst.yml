@@ -8,7 +8,7 @@ version: 1
 project:
   # id: satisfies the instance's id_pattern `^fixture-\d{4}-[a-z0-9-]+$` and is NOT the
   # id_sentinel `fixture-template-placeholder` — so `oak validate` accepts it ([R12], [R47]).
-  id: fixture-2026-interim-paper
+  id: fixture-template-placeholder
   title: An Interim Dogfood Paper for the Engine Shim
   date: 2026-07-09
   authors:
