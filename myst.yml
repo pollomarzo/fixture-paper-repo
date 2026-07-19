@@ -33,7 +33,7 @@ project:
       # A runnable engine ⟺ a release ([R57]): CI runs released tags only, never a branch tip.
       # Interim pins a dev pre-release (accumulate + prune, ../engine/RELEASING.md); becomes a
       # real `vX.Y.Z` on canonical. A non-release pin fails loud in the shim (`pin a release`).
-      version: v0.0.0-dev.12
+      version: v0.0.0-dev.13
       edition: fixture-edition
   doi: 10.5072/zenodo.562233
   github: https://github.com/pollomarzo/fixture-paper-repo
