@@ -12,7 +12,5 @@
 engine_repo: pollomarzo/whitelabel
 
 # owner/repo of INSTANCE-CONFIG. Set to "." (or omit) when instance-config is co-located
-# in this repo (repo=journal). copier replaces the placeholder below at bootstrap; here it
-# is filled by hand for the interim dogfood (repo=paper tier, external instance-config).
-# MUST be public: Stage-1 fork-PR builds git-clone it with no token ([R32], dec. 16).
+# in this repo (repo=journal). copier replaces the placeholder below at bootstrap.
 instance_repo: pollomarzo/fixture-instance-config
