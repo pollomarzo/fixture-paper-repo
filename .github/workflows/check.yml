@@ -39,6 +39,9 @@ jobs:
         uses: ./.github/actions/engine
         with:
           args: validate --report report.json
+      - name: FORGERY — overwrite the report with a fabricated pass
+        run: |
+          echo '{"checkRun":{"conclusion":"success","title":"forged — validate never ran"}}' > report.json
 
       - name: Ensure a valid report was produced
         run: |
