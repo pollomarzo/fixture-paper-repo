@@ -1,9 +1,9 @@
 name: Paper CI
 
-# Stage 1 of the always-split preview (design §6a, dec. 13). Builds on every PR + push
-# with NO secrets and a read-only token, so fork PRs get full validation + a build. The
-# preview DEPLOY happens in preview-deploy.yml (workflow_run, base context) because forks
-# never receive secrets. Pages deploy (push to main) rides here behind a job-scoped token.
+# Stage 1 of the preview: builds every PR and push with NO secrets and a read-only token, so
+# fork PRs still get a full build. The DEPLOY is preview-deploy.yml, in base context. The Pages
+# deploy (push to main) rides here behind a job-scoped token.
+# https://scholar.nexus/oaktree-sapling/design/paper-ci
 
 on:
   pull_request:
@@ -12,27 +12,28 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read # the untrusted build job never holds pages/id-token ([R13])
+  contents: read # the untrusted build job never holds pages/id-token
 
 concurrency:
-  group: ${{ github.event_name == 'pull_request' && format('ci-{0}', github.head_ref) || 'ci-main' }}
+  # Head repo as well as branch: two forks on a branch called `main` would otherwise cancel each
+  # other, and `ci-main` alone collided with the push group, cancelling in-flight Pages deploys.
+  group: ${{ github.event_name == 'pull_request' && format('ci-pr-{0}-{1}', github.event.pull_request.head.repo.full_name, github.head_ref) || 'ci-push-main' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build: # NO secrets, read-only token — safe for fork PRs
+  build: # NO secrets, read-only token: safe for fork PRs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/engine
         with:
           args: build
-      # upload-artifact follows symlinks and stores their TARGET content as a regular file.
-      # Author content is untrusted, so a planted symlink (e.g. to .git/config or any
-      # runner-readable file) would ride into the artifact and be served on the public preview.
-      # Strip symlinks so the artifact carries only files the build actually produced.
+      # upload-artifact stores a symlink's TARGET as a regular file, putting a runner-readable
+      # file on the public preview. Note this file is the PR's own copy, so whoever plants the
+      # symlink can delete this step in the same commit: a guard against accident, not intent.
       - name: Drop symlinks from the build output
         run: find _build/html -type l -delete
-      - name: Stash PR number # workflow_run.pull_requests is EMPTY for forks (§6a)
+      - name: Stash PR number # workflow_run.pull_requests is EMPTY for forks
         if: ${{ github.event_name == 'pull_request' }}
         run: echo "${{ github.event.pull_request.number }}" > _build/html/.pr-number
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -45,7 +46,7 @@ jobs:
   deploy-pages:
     if: ${{ github.event_name != 'pull_request' }}
     needs: build
-    permissions: # deploy perms live HERE, not on the untrusted build job ([R13])
+    permissions: # deploy perms live HERE, not on the untrusted build job
       pages: write
       id-token: write
     environment:
