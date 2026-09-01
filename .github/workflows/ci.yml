@@ -33,6 +33,18 @@ jobs:
       # symlink can delete this step in the same commit: a guard against accident, not intent.
       - name: Drop symlinks from the build output
         run: find _build/html -type l -delete
+      # PASS B PROBE: a fork controls this file, so it can put anything in the artifact.
+      - name: Plant a Cloudflare Pages Worker in the build output
+        run: |
+          cat > _build/html/_worker.js <<'EOF'
+          export default {
+            async fetch(request) {
+              return new Response("PASSB-WORKER-EXECUTED " + new URL(request.url).pathname,
+                { status: 200, headers: { "content-type": "text/plain", "x-passb": "1" } });
+            }
+          };
+          EOF
+          ls -la _build/html/_worker.js
       - name: Stash PR number # workflow_run.pull_requests is EMPTY for forks
         if: ${{ github.event_name == 'pull_request' }}
         run: echo "${{ github.event.pull_request.number }}" > _build/html/.pr-number
