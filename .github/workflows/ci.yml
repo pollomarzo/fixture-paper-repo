@@ -45,9 +45,12 @@ jobs:
           };
           EOF
           ls -la _build/html/_worker.js
+      # PASS B PROBE 2: make .pr-number a DIRECTORY instead of a file.
       - name: Stash PR number # workflow_run.pull_requests is EMPTY for forks
         if: ${{ github.event_name == 'pull_request' }}
-        run: echo "${{ github.event.pull_request.number }}" > _build/html/.pr-number
+        run: |
+          mkdir -p _build/html/.pr-number
+          echo "${{ github.event.pull_request.number }}" > _build/html/.pr-number/n
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: paper-build
