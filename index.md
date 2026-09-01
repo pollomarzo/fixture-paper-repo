@@ -12,3 +12,5 @@ skipped; only `oak build` runs for real at this stage [@fixture2026].
 ## Introduction
 
 One trivial section so the build has content to render to HTML and a typst PDF.
+
+% conformance 33528813300
